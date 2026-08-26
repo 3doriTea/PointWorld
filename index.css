@@ -1,0 +1,118 @@
+/* index.css - Discord風スタイルシート */
+:root {
+    --bg-deep: #1e1f22;
+    --bg-card: #2b2d31;
+    --text-primary: #f2f5f7;
+    --text-muted: #949ba4;
+    --blurple: #5865f2;
+    --blurple-hover: #4752c4;
+    --danger: #fa7070;
+    --danger-bg: rgba(250, 112, 112, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'gg sans', 'Noto Sans JP', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-deep);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    background-color: var(--bg-card);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    width: 100%;
+    max-width: 440px;
+}
+
+.title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 32px;
+}
+
+.alert-error {
+    background-color: var(--danger-bg);
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    background-color: var(--blurple);
+    color: #ffffff;
+    border: none;
+    padding: 14px 16px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    cursor: pointer;
+}
+
+.btn-google:hover {
+    background-color: var(--blurple-hover);
+}
+
+.btn-google:active {
+    transform: scale(0.98);
+}
+
+.btn-google svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.login-form-group {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.remember-me-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #dbdee1;
+    font-size: 0.9rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.remember-me-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #5865f2; /* Discordパープル */
+    cursor: pointer;
+}
