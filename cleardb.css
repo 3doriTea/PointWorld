@@ -1,0 +1,83 @@
+body {
+    background-color: #1e1f22;
+    color: #dbdee1;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.card {
+    background-color: #2b2d31;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+
+h1 {
+    color: #fa7070;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+p {
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.warning-text {
+    color: #fa7070;
+}
+
+.alert {
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.alert-success {
+    background: #233529;
+    color: #57f287;
+    border: 1px solid #57f287;
+}
+
+.alert-error {
+    background: #3c2226;
+    color: #fa7070;
+    border: 1px solid #fa7070;
+}
+
+.btn-danger {
+    background-color: #da373c;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+.btn-danger:hover {
+    background-color: #a1282c;
+}
+
+.btn-secondary {
+    display: inline-block;
+    margin-top: 15px;
+    color: #b5bac1;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.btn-secondary:hover {
+    text-decoration: underline;
+}
