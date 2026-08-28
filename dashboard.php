@@ -11,6 +11,8 @@ if (!isset($_SESSION['user'])) {
 
 $user = $_SESSION['user'];
 $current_points = 0;
+$total_world_points = 0;
+$point_percentage = 0.0;
 $point_history = [];
 
 // 管理者判定
@@ -33,10 +35,19 @@ try {
     $stmt_point->execute([$user['id']]);
     $point_data = $stmt_point->fetch();
     if ($point_data) {
-        $current_points = $point_data['current_points'];
+        $current_points = (int)$point_data['current_points'];
     }
 
-    // 2. ポイント増減履歴を取得（最新20件）
+    // 2. 世界全体（全ユーザー）の合計ポイントを取得
+    $stmt_total = $pdo->query("SELECT SUM(current_points) AS total_points FROM pp_point_tbl");
+    $total_data = $stmt_total->fetch();
+    if ($total_data && $total_data['total_points'] > 0) {
+        $total_world_points = (int)$total_data['total_points'];
+        // 所有割合を計算 (ゼロ除算対策あり)
+        $point_percentage = ($current_points / $total_world_points) * 100;
+    }
+
+    // 3. ポイント増減履歴を取得（最新20件）
     $stmt_history = $pdo->prepare("
         SELECT point_change, reason, created_at 
         FROM pp_point_history_tbl 
@@ -85,6 +96,10 @@ try {
             <span class="point-label">現在の所有ポイント</span>
             <div class="point-value">
                 <?= number_format($current_points) ?> <span class="point-unit">pt</span>
+            </div>
+            <!-- 世界の所有率表示を追加 -->
+            <div class="point-share" style="margin-top: 10px; font-size: 0.95rem; color: #a0a0a0;">
+                あなたは世界のポイントの <strong style="color: #ffd700; font-size: 1.1rem;"><?= number_format($point_percentage, 2) ?>%</strong> を所有しています
             </div>
         </section>
 

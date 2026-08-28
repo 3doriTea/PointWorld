@@ -340,7 +340,7 @@ $referer_url = $_SERVER['HTTP_REFERER'] ?? '';
     <div class="login-form-group">
         <label class="remember-me-label">
             <input type="checkbox" id="remember_me" checked>
-            <span>ログイン状態を保持する（30日間）</span>
+            <span>ログイン状態を保持する (30日間)</span>
         </label>
     </div>
 
