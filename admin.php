@@ -1,73 +1,39 @@
 <?php
-// admin.php
-session_start();
-require_once __DIR__ . '/ENV.php';
+require_once(__DIR__ . '/functions.php');
 
-// 未ログインまたは非管理者アクセスの拒否
-if (!isset($_SESSION['user']) || !defined('ADMIN_EMAIL') || $_SESSION['user']['email'] !== ADMIN_EMAIL) {
-    header('Location: dashboard.php');
-    exit;
-}
+// NOTE: アドミン必須ページ
+$user = requireAdmin();
 
 $message = '';
 $error = '';
+$db = getDB();
 
-try {
-    $pdo = new PDO(
-        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
-        DB_USER,
-        DB_PASS,
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]
-    );
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_points') {
+    $target_user_id = intval($_POST['target_user_id'] ?? 0);
+    $point_change   = intval($_POST['point_change'] ?? 0);
+    $reason         = trim($_POST['reason'] ?? '');
 
-    // ポイント操作リクエストの処理
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_points') {
-        $target_user_id = intval($_POST['target_user_id'] ?? 0);
-        $point_change   = intval($_POST['point_change'] ?? 0);
-        $reason         = trim($_POST['reason'] ?? '');
-
-        if ($target_user_id <= 0 || $point_change === 0 || empty($reason)) {
-            $error = 'ユーザー、ポイント変動値、理由は必須入力です。';
-        } else {
-            $pdo->beginTransaction();
-
-            // 1. 現状のポイント数を更新 (レコードがなければ挿入)
-            $stmt = $pdo->prepare("
-                INSERT INTO pp_point_tbl (user_id, current_points) 
-                VALUES (?, ?) 
-                ON DUPLICATE KEY UPDATE current_points = current_points + VALUES(current_points)
-            ");
-            $stmt->execute([$target_user_id, $point_change]);
-
-            // 2. 履歴レコードの記録
-            $stmt_history = $pdo->prepare("
-                INSERT INTO pp_point_history_tbl (user_id, point_change, reason) 
-                VALUES (?, ?, ?)
-            ");
-            $stmt_history->execute([$target_user_id, $point_change, $reason]);
-
-            $pdo->commit();
+    if ($target_user_id <= 0 || $point_change === 0 || empty($reason)) {
+        $error = 'ユーザー、ポイント変動値、理由は必須入力です。';
+    } else {
+        if (updateUserPoints($target_user_id, $point_change, $reason)) {
             $message = 'ポイントを正常に更新しました。';
+        } else {
+            $error = 'ポイントの更新に失敗しました。';
         }
     }
+}
 
-    // 全ユーザーリストと現在のポイントを取得
-    $stmt_users = $pdo->query("
+// ユーザー一覧取得
+$users = [];
+if ($db) {
+    $stmt_users = $db->query("
         SELECT u.id, u.username, u.email, COALESCE(p.current_points, 0) as current_points 
         FROM pp_user_tbl u
         LEFT JOIN pp_point_tbl p ON u.id = p.user_id
         ORDER BY u.id DESC
     ");
     $users = $stmt_users->fetchAll();
-
-} catch (Exception $e) {
-    if (isset($pdo) && $pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
-    $error = 'データベースエラー: ' . $e->getMessage();
 }
 ?>
 <!DOCTYPE html>
@@ -89,13 +55,12 @@ try {
 
     <main class="main-content">
         <?php if (!empty($message)): ?>
-            <div class="alert-success"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></div>
+            <div class="alert-success"><?= h($message) ?></div>
         <?php endif; ?>
         <?php if (!empty($error)): ?>
-            <div class="alert-error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
+            <div class="alert-error"><?= h($error) ?></div>
         <?php endif; ?>
 
-        <!-- ポイント操作フォーム -->
         <section class="admin-card">
             <h3 class="section-title">ユーザーポイント変更</h3>
             <form action="admin.php" method="POST" class="admin-form">
@@ -107,15 +72,14 @@ try {
                         <option value="">ユーザーを選択してください</option>
                         <?php foreach ($users as $u): ?>
                             <option value="<?= $u['id'] ?>">
-                                <?= htmlspecialchars($u['username'], ENT_QUOTES, 'UTF-8') ?> 
-                                (<?= htmlspecialchars($u['email'], ENT_QUOTES, 'UTF-8') ?>) - 現在: <?= number_format($u['current_points']) ?> pt
+                                <?= h($u['username']) ?> (<?= h($u['email']) ?>) - 現在: <?= number_format($u['current_points']) ?> pt
                             </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="point_change">増減ポイント（減算の場合はマイナス指定）</label>
+                    <label for="point_change">増減ポイント（減算の場合はマイナス指定できるよ）</label>
                     <input type="number" name="point_change" id="point_change" placeholder="例: 100 または -50" required>
                 </div>
 
@@ -128,7 +92,6 @@ try {
             </form>
         </section>
 
-        <!-- ユーザー一覧テーブル -->
         <section class="admin-card">
             <h3 class="section-title">登録ユーザー一覧</h3>
             <div class="table-wrapper">
@@ -145,8 +108,8 @@ try {
                         <?php foreach ($users as $u): ?>
                             <tr>
                                 <td><?= $u['id'] ?></td>
-                                <td><?= htmlspecialchars($u['username'], ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($u['email'], ENT_QUOTES, 'UTF-8') ?></td>
+                                <td><?= h($u['username']) ?></td>
+                                <td><?= h($u['email']) ?></td>
                                 <td><strong><?= number_format($u['current_points']) ?></strong> pt</td>
                             </tr>
                         <?php endforeach; ?>

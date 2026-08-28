@@ -1,5 +1,4 @@
 <?php
-// ENV.php
 $envFilePath = __DIR__ . '/.env';
 
 if (file_exists($envFilePath)) {

@@ -1,54 +1,19 @@
 <?php
-// dashboard.php
-session_start();
-require_once __DIR__ . '/ENV.php';
+require_once(__DIR__ . '/functions.php');
 
-// 未ログイン保護
-if (!isset($_SESSION['user'])) {
-    header('Location: index.php');
-    exit;
-}
+$user = requireLogin();
+$is_admin = isAdmin($user);
 
-$user = $_SESSION['user'];
-$current_points = 0;
-$total_world_points = 0;
-$point_percentage = 0.0;
+// ポイントデータ取得
+$point_info = getUserPointData($user['id']);
+$current_points   = $point_info['current'];
+$point_percentage = $point_info['percentage'];
+
+// ポイント履歴取得
 $point_history = [];
-
-// 管理者判定
-$is_admin = defined('ADMIN_EMAIL') && ($user['email'] === ADMIN_EMAIL);
-
-// DB接続
-try {
-    $pdo = new PDO(
-        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
-        DB_USER,
-        DB_PASS,
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]
-    );
-
-    // 1. 最新の所有ポイントを取得
-    $stmt_point = $pdo->prepare("SELECT current_points FROM pp_point_tbl WHERE user_id = ?");
-    $stmt_point->execute([$user['id']]);
-    $point_data = $stmt_point->fetch();
-    if ($point_data) {
-        $current_points = (int)$point_data['current_points'];
-    }
-
-    // 2. 世界全体（全ユーザー）の合計ポイントを取得
-    $stmt_total = $pdo->query("SELECT SUM(current_points) AS total_points FROM pp_point_tbl");
-    $total_data = $stmt_total->fetch();
-    if ($total_data && $total_data['total_points'] > 0) {
-        $total_world_points = (int)$total_data['total_points'];
-        // 所有割合を計算 (ゼロ除算対策あり)
-        $point_percentage = ($current_points / $total_world_points) * 100;
-    }
-
-    // 3. ポイント増減履歴を取得（最新20件）
-    $stmt_history = $pdo->prepare("
+$db = getDB();
+if ($db) {
+    $stmt_history = $db->prepare("
         SELECT point_change, reason, created_at 
         FROM pp_point_history_tbl 
         WHERE user_id = ? 
@@ -57,9 +22,6 @@ try {
     ");
     $stmt_history->execute([$user['id']]);
     $point_history = $stmt_history->fetchAll();
-
-} catch (PDOException $e) {
-    // DBエラー処理
 }
 ?>
 <!DOCTYPE html>
@@ -73,13 +35,12 @@ try {
 <body>
 
 <div class="dashboard-container">
-    <!-- ヘッダーエリア -->
     <header class="header">
         <div class="user-profile">
-            <img src="<?= htmlspecialchars($user['avatar_url'] ?: 'https://via.placeholder.com/80', ENT_QUOTES, 'UTF-8') ?>" alt="アバター" class="avatar">
+            <img src="<?= h($user['avatar_url'] ?: 'https://via.placeholder.com/80') ?>" alt="アバター" class="avatar">
             <div class="user-info">
-                <h2 class="username"><?= htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8') ?></h2>
-                <p class="email"><?= htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8') ?></p>
+                <h2 class="username"><?= h($user['username']) ?></h2>
+                <p class="email"><?= h($user['email']) ?></p>
             </div>
         </div>
         <div class="header-actions">
@@ -90,14 +51,12 @@ try {
         </div>
     </header>
 
-    <!-- メインコンテンツ -->
     <main class="main-content">
         <section class="point-card">
             <span class="point-label">現在の所有ポイント</span>
             <div class="point-value">
                 <?= number_format($current_points) ?> <span class="point-unit">pt</span>
             </div>
-            <!-- 世界の所有率表示を追加 -->
             <div class="point-share" style="margin-top: 10px; font-size: 0.95rem; color: #a0a0a0;">
                 あなたは世界のポイントの <strong style="color: #ffd700; font-size: 1.1rem;"><?= number_format($point_percentage, 2) ?>%</strong> を所有しています
             </div>
@@ -112,7 +71,7 @@ try {
                     <?php foreach ($point_history as $item): ?>
                         <div class="history-item">
                             <div class="history-details">
-                                <span class="history-reason"><?= htmlspecialchars($item['reason'], ENT_QUOTES, 'UTF-8') ?></span>
+                                <span class="history-reason"><?= h($item['reason']) ?></span>
                                 <span class="history-date"><?= date('Y/m/d H:i', strtotime($item['created_at'])) ?></span>
                             </div>
                             <div class="history-change <?= $item['point_change'] >= 0 ? 'plus' : 'minus' ?>">
