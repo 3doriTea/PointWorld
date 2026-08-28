@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/functions.php');
 
+// NOTE: ログイン必須ページ
 $user = requireLogin();
 $is_admin = isAdmin($user);
 

@@ -61,6 +61,7 @@ if ($db) {
             <div class="alert-error"><?= h($error) ?></div>
         <?php endif; ?>
 
+        <!-- ポイント操作フォーム -->
         <section class="admin-card">
             <h3 class="section-title">ユーザーポイント変更</h3>
             <form action="admin.php" method="POST" class="admin-form">
@@ -92,6 +93,7 @@ if ($db) {
             </form>
         </section>
 
+        <!-- ユーザー一覧テーブル -->
         <section class="admin-card">
             <h3 class="section-title">登録ユーザー一覧</h3>
             <div class="table-wrapper">
@@ -116,6 +118,18 @@ if ($db) {
                     </tbody>
                 </table>
             </div>
+        </section>
+
+        <!-- データベースリセット案内カード -->
+        <section class="admin-card danger-zone">
+            <h3 class="section-title danger-title">⚠️ システム管理・データベースリセット</h3>
+            <p class="danger-description">
+                開発環境の初期化や動作検証用に、データベース全テーブル（ユーザー情報・OAuth連携・ポイント・履歴など）を削除・初期化する専用ページを用意しています。<br>
+                <span class="danger-warning">※この操作を実行するとデータは完全に消失し、全ユーザーがログアウトされます。</span>
+            </p>
+            <a href="cleardb.php" class="btn-danger">
+                データベースリセットページへ移動
+            </a>
         </section>
     </main>
 </div>
