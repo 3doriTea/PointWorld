@@ -11,13 +11,13 @@ CREATE TABLE IF NOT EXISTS pp_user_tbl (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------------------------------
--- 2. 外部OAuth認証情報統合テーブル（Google, Discord等）
+-- 2. 外部OAuth認証情報統合テーブル（Google, GitHub等）
 -- ----------------------------------------------------
 CREATE TABLE IF NOT EXISTS pp_user_providers_tbl (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    provider_name VARCHAR(50) NOT NULL, -- 'google', 'discord' など
-    provider_user_id VARCHAR(255) NOT NULL, -- 各サービスの固有ID (Googleの sub や Discordの id)
+    provider_name VARCHAR(50) NOT NULL, -- 'google', 'github' など
+    provider_user_id VARCHAR(255) NOT NULL, -- 各サービスの固有ID (Googleの sub や GitHubの id)
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES pp_user_tbl(id) ON DELETE CASCADE,
     UNIQUE KEY unique_provider (provider_name, provider_user_id)
