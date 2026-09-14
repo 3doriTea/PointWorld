@@ -117,4 +117,4 @@ OAuth 2.0 を利用するにあたり、`curl`を使うと便利なので、
 8. 保存データのリセット
 9. GitHubではなくGoogleアカウントとして登録
 
-![](./mov/GE3A37_ServProg.mp4)
+[![動画のタイトル](https://img.youtube.com/vi/AOchb1wFXzs/hqdefault.jpg)](https://www.youtube.com/watch?v=AOchb1wFXzs)
