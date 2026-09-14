@@ -5,7 +5,7 @@ require_once(__DIR__ . '/functions.php');
 $error_message = '';
 
 // ----------------------------------------------------
-// 0. 自動ログイン（Remember Me）チェック処理
+// 自動ログイン（Remember Me）チェック処理
 // ----------------------------------------------------
 if (!isset($_SESSION['user']) && isset($_COOKIE['remember_token'])) {
     $db = getDB();

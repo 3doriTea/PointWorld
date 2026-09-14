@@ -5,7 +5,7 @@ if (file_exists($envFilePath)) {
     $lines = file($envFilePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     $envVars = [];
 
-    // 1st pass: .env のキーと値を読み込み＆引用符（"や'）のトリム処理
+    // .env のキーと値を読み込み＆引用符（"や'）のトリム処理
     foreach ($lines as $line) {
         $line = trim($line);
         // コメント行や空行をスキップ
@@ -25,7 +25,7 @@ if (file_exists($envFilePath)) {
         }
     }
 
-    // 2nd pass: ${VAR_NAME} の変数展開と define()
+    // ${VAR_NAME} の変数展開と define()
     foreach ($envVars as $key => $value) {
         // ${...} を対応する値に置換
         $value = preg_replace_callback('/\$\{([A-Z0-9_]+)\}/i', function ($matches) use ($envVars) {
