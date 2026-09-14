@@ -117,6 +117,5 @@ OAuth 2.0 を利用するにあたり、`curl`を使うと便利なので、
 8. 保存データのリセット
 9. GitHubではなくGoogleアカウントとして登録
 
-[![動画のタイトル](https://img.youtube.com/vi/AOchb1wFXzs/hqdefault.jpg)](https://www.youtube.com/watch?v=AOchb1wFXzs)
-
-<iframe width="1521" height="561" src="https://www.youtube.com/embed/AOchb1wFXzs" title="[サーバーサイドプログラミング最終課題] 実演動画 GE3A37" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+実演動画は以下のサムネイル画像をクリックしてください。  
+[![](https://img.youtube.com/vi/AOchb1wFXzs/hqdefault.jpg)](https://www.youtube.com/watch?v=AOchb1wFXzs)
