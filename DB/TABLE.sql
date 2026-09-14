@@ -1,6 +1,4 @@
--- ----------------------------------------------------
--- 1. ユーザー基本情報テーブル
--- ----------------------------------------------------
+-- ユーザー基本情報テーブル
 CREATE TABLE IF NOT EXISTS pp_user_tbl (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) NOT NULL,
@@ -10,9 +8,7 @@ CREATE TABLE IF NOT EXISTS pp_user_tbl (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ----------------------------------------------------
--- 2. 外部OAuth認証情報統合テーブル（Google, GitHub等）
--- ----------------------------------------------------
+-- 外部OAuth認証情報統合テーブル（Google, GitHub等）
 CREATE TABLE IF NOT EXISTS pp_user_providers_tbl (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -23,9 +19,7 @@ CREATE TABLE IF NOT EXISTS pp_user_providers_tbl (
     UNIQUE KEY unique_provider (provider_name, provider_user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ----------------------------------------------------
--- 3. ポイント保有量管理テーブル
--- ----------------------------------------------------
+-- ポイント保有量管理テーブル
 CREATE TABLE IF NOT EXISTS pp_point_tbl (
     user_id INT PRIMARY KEY,
     current_points INT NOT NULL DEFAULT 0,
@@ -33,9 +27,7 @@ CREATE TABLE IF NOT EXISTS pp_point_tbl (
     FOREIGN KEY (user_id) REFERENCES pp_user_tbl(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ----------------------------------------------------
--- 4. ポイント増減履歴テーブル
--- ----------------------------------------------------
+-- ポイント増減履歴テーブル
 CREATE TABLE IF NOT EXISTS pp_point_history_tbl (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -45,9 +37,7 @@ CREATE TABLE IF NOT EXISTS pp_point_history_tbl (
     FOREIGN KEY (user_id) REFERENCES pp_user_tbl(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ----------------------------------------------------
--- 5. リメンバートークン用
--- ----------------------------------------------------
+-- リメンバートークン用
 CREATE TABLE IF NOT EXISTS pp_user_tokens_tbl (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
